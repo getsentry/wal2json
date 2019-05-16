@@ -964,6 +964,9 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	escape_json(ctx->out, NameStr(class_form->relname));
 	appendStringInfo(ctx->out, ",%s", data->nl);
 
+	appendStringInfo(ctx->out, "\"xid\":%u", txn->xid);
+	appendStringInfo(ctx->out, ",");
+
 	switch (change->action)
 	{
 		case REORDER_BUFFER_CHANGE_INSERT:
