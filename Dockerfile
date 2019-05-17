@@ -1,6 +1,6 @@
 FROM postgres:9.6-alpine
 
-RUN apk add --no-cache --virtual .build-deps gcc git make musl-dev pkgconf
+RUN apk add --no-cache --virtual .build-deps gcc git make musl-dev pkgconf diffutils
 COPY . /wal2json
 RUN cd wal2json && make && make install && rm -rf wal2json
 
