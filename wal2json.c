@@ -45,7 +45,6 @@ typedef struct
 	bool		include_not_null;	/* include not-null constraints */
 
 	bool		pretty_print;		/* pretty-print JSON? */
-	bool		write_in_chunks;	/* write in chunks? */
 
 	List		*filter_tables;		/* filter out tables */
 	List		*add_tables;		/* add only these tables */
@@ -142,7 +141,6 @@ pg_decode_startup(LogicalDecodingContext *ctx, OutputPluginOptions *opt, bool is
 	data->include_type_oids = false;
 	data->include_typmod = true;
 	data->pretty_print = false;
-	data->write_in_chunks = false;
 	data->include_lsn = false;
 	data->include_not_null = false;
 	data->filter_tables = NIL;
@@ -283,19 +281,6 @@ pg_decode_startup(LogicalDecodingContext *ctx, OutputPluginOptions *opt, bool is
 				strncpy(data->nl, "\n", 1);
 				strncpy(data->sp, " ", 1);
 			}
-		}
-		else if (strcmp(elem->defname, "write-in-chunks") == 0)
-		{
-			if (elem->arg == NULL)
-			{
-				elog(DEBUG1, "write-in-chunks argument is null");
-				data->write_in_chunks = true;
-			}
-			else if (!parse_bool(strVal(elem->arg), &data->write_in_chunks))
-				ereport(ERROR,
-						(errcode(ERRCODE_INVALID_PARAMETER_VALUE),
-						 errmsg("could not parse value \"%s\" for parameter \"%s\"",
-							 strVal(elem->arg), elem->defname)));
 		}
 		else if (strcmp(elem->defname, "include-lsn") == 0)
 		{
@@ -446,9 +431,6 @@ pg_decode_begin_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn)
 		appendStringInfo(ctx->out, "%s\"timestamp\":%s\"%s\",%s", data->ht, data->sp, timestamptz_to_str(txn->commit_time), data->nl);
 
 	appendStringInfo(ctx->out, "%s\"change\":%s[", data->ht, data->sp);
-
-	if (data->write_in_chunks)
-		OutputPluginWrite(ctx, true);
 }
 
 /* COMMIT callback */
@@ -466,13 +448,7 @@ pg_decode_commit_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	elog(DEBUG2, "# of subxacts: %d", txn->nsubtxns);
 
 	/* Transaction ends */
-	if (data->write_in_chunks)
-		OutputPluginPrepareWrite(ctx, true);
-
-	/* if we don't write in chunks, we need a newline here */
-	if (!data->write_in_chunks)
-		appendStringInfo(ctx->out, "%s", data->nl);
-
+	appendStringInfo(ctx->out, "%s", data->nl);
 	appendStringInfo(ctx->out, "%s]%s}", data->ht, data->nl);
 
 	OutputPluginWrite(ctx, true);
@@ -805,9 +781,6 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	schemaname = get_namespace_name(class_form->relnamespace);
 	tablename = NameStr(class_form->relname);
 
-	if (data->write_in_chunks)
-		OutputPluginPrepareWrite(ctx, true);
-
 	/* Make sure rd_replidindex is set */
 	RelationGetIndexList(relation);
 
@@ -926,9 +899,7 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	/* Change counter */
 	data->nr_changes++;
 
-	/* if we don't write in chunks, we need a newline here */
-	if (!data->write_in_chunks)
-		appendStringInfo(ctx->out, "%s", data->nl);
+	appendStringInfo(ctx->out, "%s", data->nl);
 
 	appendStringInfo(ctx->out, "%s%s", data->ht, data->ht);
 
@@ -1032,9 +1003,6 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 
 	MemoryContextSwitchTo(old);
 	MemoryContextReset(data->context);
-
-	if (data->write_in_chunks)
-		OutputPluginWrite(ctx, true);
 }
 
 #if	PG_VERSION_NUM >= 90600
@@ -1057,7 +1025,7 @@ pg_decode_message(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	 * write immediately iif (i) write-in-chunks=1 or (ii) non-transactional
 	 * messages.
 	 */
-	if (data->write_in_chunks || !transactional)
+	if (!transactional)
 		OutputPluginPrepareWrite(ctx, true);
 
 	/*
@@ -1067,9 +1035,8 @@ pg_decode_message(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	if (transactional)
 		data->nr_changes++;
 
-	/* if we don't write in chunks, we need a newline here */
-	if (!data->write_in_chunks && transactional)
-			appendStringInfo(ctx->out, "%s", data->nl);
+	if (transactional)
+		appendStringInfo(ctx->out, "%s", data->nl);
 
 	/* build a complete JSON object for non-transactional message */
 	if (!transactional)
@@ -1105,7 +1072,7 @@ pg_decode_message(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	MemoryContextSwitchTo(old);
 	MemoryContextReset(data->context);
 
-	if (data->write_in_chunks || !transactional)
+	if (!transactional)
 		OutputPluginWrite(ctx, true);
 }
 #endif
