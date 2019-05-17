@@ -864,6 +864,17 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	if (data->include_xids)	
 		appendStringInfo(ctx->out, "%s\"xid\":%s%u,%s", data->ht, data->sp, txn->xid, data->nl);
 
+	if (data->include_lsn)	
+	{	
+		char *lsn_str = DatumGetCString(DirectFunctionCall1(pg_lsn_out, txn->end_lsn));	
+
+ 		appendStringInfo(ctx->out, "%s\"nextlsn\":%s\"%s\",%s", data->ht, data->sp, lsn_str, data->nl);	
+ 		pfree(lsn_str);	
+	}	
+
+ 	if (data->include_timestamp)	
+		appendStringInfo(ctx->out, "%s\"timestamp\":%s\"%s\",%s", data->ht, data->sp, timestamptz_to_str(txn->commit_time), data->nl);	
+
 	/* Print change kind */
 	switch (change->action)
 	{

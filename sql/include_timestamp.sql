@@ -19,7 +19,7 @@ SELECT count(*) = 2, count(distinct ((data::json)->'timestamp')::text) = 2 FROM 
 
 -- Two rows in one transaction should have one record and one timestamp
 INSERT INTO tbl VALUES (4), (5);
-SELECT count(*) = 1, count(distinct ((data::json)->'timestamp')::text) = 1 FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-timestamp', '1');
+SELECT count(*) = 2, count(distinct ((data::json)->'timestamp')::text) = 1 FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'include-timestamp', '1');
 
 SELECT 'stop' FROM pg_drop_replication_slot('regression_slot');
 
