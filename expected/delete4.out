@@ -42,6 +42,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
  {"event":"commit"}
  {"event":"begin"}
  {                                              +
+         "event": "change",                     +
          "kind": "delete",                      +
          "schema": "public",                    +
          "table": "table_with_unique",          +
@@ -54,6 +55,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
  {"event":"commit"}
  {"event":"begin"}
  {                                              +
+         "event": "change",                     +
          "kind": "delete",                      +
          "schema": "public",                    +
          "table": "table_with_unique",          +

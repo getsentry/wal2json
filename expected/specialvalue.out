@@ -24,6 +24,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
  {"event":"commit"}
  {"event":"begin"}
  {                                                                                                      +
+         "event": "change",                                                                             +
          "kind": "insert",                                                                              +
          "schema": "public",                                                                            +
          "table": "xpto",                                                                               +
@@ -32,6 +33,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [1, true, "test1", null]                                                       +
  }
  {                                                                                                      +
+         "event": "change",                                                                             +
          "kind": "insert",                                                                              +
          "schema": "public",                                                                            +
          "table": "xpto",                                                                               +
@@ -40,6 +42,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [2, false, "test2", null]                                                      +
  }
  {                                                                                                      +
+         "event": "change",                                                                             +
          "kind": "insert",                                                                              +
          "schema": "public",                                                                            +
          "table": "xpto",                                                                               +
@@ -48,6 +51,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [3, null, "null", null]                                                        +
  }
  {                                                                                                      +
+         "event": "change",                                                                             +
          "kind": "insert",                                                                              +
          "schema": "public",                                                                            +
          "table": "xpto",                                                                               +

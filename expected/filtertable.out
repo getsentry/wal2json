@@ -81,6 +81,7 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
  {"event":"commit"}
  {"event":"begin"}
  {                                                            +
+         "event": "change",                                   +
          "kind": "insert",                                    +
          "schema": "filter_schema_1",                         +
          "table": "filter_table_2",                           +
@@ -97,6 +98,7 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
  {"event":"commit"}
  {"event":"begin"}
  {                                                            +
+         "event": "change",                                   +
          "kind": "insert",                                    +
          "schema": "public",                                  +
          "table": "filter_table_2",                           +
@@ -109,6 +111,7 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
  {"event":"commit"}
  {"event":"begin"}
  {                                                            +
+         "event": "change",                                   +
          "kind": "insert",                                    +
          "schema": "public",                                  +
          "table": "filter_table_4",                           +

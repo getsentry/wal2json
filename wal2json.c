@@ -876,6 +876,7 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	}
 
 	appendStringInfo(ctx->out, "{%s", data->nl);
+	appendStringInfo(ctx->out, "%s\"event\":%s\"change\",%s", data->ht, data->sp, data->nl);
 
 	if (data->include_xids)	
 		appendStringInfo(ctx->out, "%s\"xid\":%s%u,%s", data->ht, data->sp, txn->xid, data->nl);

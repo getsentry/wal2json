@@ -83,6 +83,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  {"event":"begin"}
  {                                                                                                                                                                                                          +
+         "event": "change",                                                                                                                                                                                 +
          "kind": "insert",                                                                                                                                                                                  +
          "schema": "public",                                                                                                                                                                                +
          "table": "table_with_pk",                                                                                                                                                                          +
@@ -91,6 +92,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
  }
  {                                                                                                                                                                                                          +
+         "event": "change",                                                                                                                                                                                 +
          "kind": "insert",                                                                                                                                                                                  +
          "schema": "public",                                                                                                                                                                                +
          "table": "table_without_pk",                                                                                                                                                                       +
@@ -99,6 +101,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
  }
  {                                                                                                                                                                                                          +
+         "event": "change",                                                                                                                                                                                 +
          "kind": "insert",                                                                                                                                                                                  +
          "schema": "public",                                                                                                                                                                                +
          "table": "table_with_unique",                                                                                                                                                                      +
@@ -107,6 +110,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
  }
  {                                                                                                                                                                                                          +
+         "event": "change",                                                                                                                                                                                 +
          "kind": "insert",                                                                                                                                                                                  +
          "schema": "test \"schema",                                                                                                                                                                         +
          "table": "test \" with 'quotes'",                                                                                                                                                                  +
