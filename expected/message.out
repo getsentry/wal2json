@@ -72,95 +72,63 @@ SELECT 'msg10' FROM pg_logical_emit_message(true, 'wal2json', 'this is message #
 
 COMMIT;
 SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pretty-print', '1');
-                                                  data                                                   
----------------------------------------------------------------------------------------------------------
- {                                                                                                      +
-         "change": [                                                                                    +
-                 {                                                                                      +
-                         "kind": "message",                                                             +
-                         "transactional": true,                                                         +
-                         "prefix": "wal2json",                                                          +
-                         "content": "this is a\\ message"                                               +
-                 }                                                                                      +
-         ]                                                                                              +
+                                          data                                           
+-----------------------------------------------------------------------------------------
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": true,                                                         +
+         "prefix": "wal2json",                                                          +
+         "content": "this is a\\ message"                                               +
  }
- {                                                                                                      +
-         "change": [                                                                                    +
-                 {                                                                                      +
-                         "kind": "message",                                                             +
-                         "transactional": false,                                                        +
-                         "prefix": "wal2json",                                                          +
-                         "content": "this is \"another\" message"                                       +
-                 }                                                                                      +
-         ]                                                                                              +
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": false,                                                        +
+         "prefix": "wal2json",                                                          +
+         "content": "this is \"another\" message"                                       +
  }
- {                                                                                                      +
-         "change": [                                                                                    +
-                 {                                                                                      +
-                         "kind": "message",                                                             +
-                         "transactional": false,                                                        +
-                         "prefix": "wal2json",                                                          +
-                         "content": "Tapirus terrestris"                                                +
-                 }                                                                                      +
-         ]                                                                                              +
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": false,                                                        +
+         "prefix": "wal2json",                                                          +
+         "content": "Tapirus terrestris"                                                +
  }
- {                                                                                                      +
-         "change": [                                                                                    +
-                 {                                                                                      +
-                         "kind": "message",                                                             +
-                         "transactional": false,                                                        +
-                         "prefix": "wal2json",                                                          +
-                         "content": "Priodontes maximus"                                                +
-                 }                                                                                      +
-         ]                                                                                              +
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": false,                                                        +
+         "prefix": "wal2json",                                                          +
+         "content": "Priodontes maximus"                                                +
  }
- {                                                                                                      +
-         "change": [                                                                                    +
-                 {                                                                                      +
-                         "kind": "message",                                                             +
-                         "transactional": false,                                                        +
-                         "prefix": "wal2json",                                                          +
-                         "content": "Caryocar brasiliense"                                              +
-                 }                                                                                      +
-         ]                                                                                              +
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": false,                                                        +
+         "prefix": "wal2json",                                                          +
+         "content": "Caryocar brasiliense"                                              +
  }
- {                                                                                                      +
-         "change": [                                                                                    +
-                 {                                                                                      +
-                         "kind": "message",                                                             +
-                         "transactional": false,                                                        +
-                         "prefix": "wal2json",                                                          +
-                         "content": "this message will be printed even if the transaction is rollbacked"+
-                 }                                                                                      +
-         ]                                                                                              +
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": false,                                                        +
+         "prefix": "wal2json",                                                          +
+         "content": "this message will be printed even if the transaction is rollbacked"+
  }
- {                                                                                                      +
-         "change": [                                                                                    +
-                 {                                                                                      +
-                         "kind": "message",                                                             +
-                         "transactional": false,                                                        +
-                         "prefix": "wal2json",                                                          +
-                         "content": "this message will be printed before message #1"                    +
-                 }                                                                                      +
-         ]                                                                                              +
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": false,                                                        +
+         "prefix": "wal2json",                                                          +
+         "content": "this message will be printed before message #1"                    +
  }
- {                                                                                                      +
-         "change": [                                                                                    +
-                 {                                                                                      +
-                         "kind": "message",                                                             +
-                         "transactional": true,                                                         +
-                         "prefix": "wal2json",                                                          +
-                         "content": "this is message #1"                                                +
-                 }                                                                                      +
-                 ,{                                                                                     +
-                         "kind": "message",                                                             +
-                         "transactional": true,                                                         +
-                         "prefix": "wal2json",                                                          +
-                         "content": "this is message #2"                                                +
-                 }                                                                                      +
-         ]                                                                                              +
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": true,                                                         +
+         "prefix": "wal2json",                                                          +
+         "content": "this is message #1"                                                +
  }
-(8 rows)
+ {                                                                                      +
+         "kind": "message",                                                             +
+         "transactional": true,                                                         +
+         "prefix": "wal2json",                                                          +
+         "content": "this is message #2"                                                +
+ }
+(9 rows)
 
 SELECT 'stop' FROM pg_drop_replication_slot('regression_slot');
  ?column? 

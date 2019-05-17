@@ -406,31 +406,6 @@ pg_decode_shutdown(LogicalDecodingContext *ctx)
 static void
 pg_decode_begin_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn)
 {
-	JsonDecodingData *data = ctx->output_plugin_private;
-
-	data->nr_changes = 0;
-
-	/* Transaction starts */
-	OutputPluginPrepareWrite(ctx, true);
-
-	appendStringInfo(ctx->out, "{%s", data->nl);
-
-	if (data->include_xids)
-		appendStringInfo(ctx->out, "%s\"xid\":%s%u,%s", data->ht, data->sp, txn->xid, data->nl);
-
-	if (data->include_lsn)
-	{
-		char *lsn_str = DatumGetCString(DirectFunctionCall1(pg_lsn_out, txn->end_lsn));
-
-		appendStringInfo(ctx->out, "%s\"nextlsn\":%s\"%s\",%s", data->ht, data->sp, lsn_str, data->nl);
-
-		pfree(lsn_str);
-	}
-
-	if (data->include_timestamp)
-		appendStringInfo(ctx->out, "%s\"timestamp\":%s\"%s\",%s", data->ht, data->sp, timestamptz_to_str(txn->commit_time), data->nl);
-
-	appendStringInfo(ctx->out, "%s\"change\":%s[", data->ht, data->sp);
 }
 
 /* COMMIT callback */
@@ -438,20 +413,6 @@ static void
 pg_decode_commit_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 					 XLogRecPtr commit_lsn)
 {
-	JsonDecodingData *data = ctx->output_plugin_private;
-
-	if (txn->has_catalog_changes)
-		elog(DEBUG2, "txn has catalog changes: yes");
-	else
-		elog(DEBUG2, "txn has catalog changes: no");
-	elog(DEBUG2, "my change counter: %lu ; # of changes: %lu ; # of changes in memory: %lu", data->nr_changes, txn->nentries, txn->nentries_mem);
-	elog(DEBUG2, "# of subxacts: %d", txn->nsubtxns);
-
-	/* Transaction ends */
-	appendStringInfo(ctx->out, "%s", data->nl);
-	appendStringInfo(ctx->out, "%s]%s}", data->ht, data->nl);
-
-	OutputPluginWrite(ctx, true);
 }
 
 
@@ -491,22 +452,22 @@ tuple_to_stringinfo(LogicalDecodingContext *ctx, TupleDesc tupdesc, HeapTuple tu
 	 */
 	if (replident)
 	{
-		appendStringInfo(&colnames, "%s%s%s\"oldkeys\":%s{%s", data->ht, data->ht, data->ht, data->sp, data->nl);
-		appendStringInfo(&colnames, "%s%s%s%s\"keynames\":%s[", data->ht, data->ht, data->ht, data->ht, data->sp);
-		appendStringInfo(&coltypes, "%s%s%s%s\"keytypes\":%s[", data->ht, data->ht, data->ht, data->ht, data->sp);
+		appendStringInfo(&colnames, "%s\"oldkeys\":%s{%s", data->ht, data->sp, data->nl);
+		appendStringInfo(&colnames, "%s%s\"keynames\":%s[", data->ht, data->ht, data->sp);
+		appendStringInfo(&coltypes, "%s%s\"keytypes\":%s[", data->ht, data->ht, data->sp);
 		if (data->include_type_oids)
-			appendStringInfo(&coltypeoids, "%s%s%s%s\"keytypeoids\":%s[", data->ht, data->ht, data->ht, data->ht, data->sp);
-		appendStringInfo(&colvalues, "%s%s%s%s\"keyvalues\":%s[", data->ht, data->ht, data->ht, data->ht, data->sp);
+			appendStringInfo(&coltypeoids, "%s%s\"keytypeoids\":%s[", data->ht, data->ht, data->sp);
+		appendStringInfo(&colvalues, "%s%s\"keyvalues\":%s[", data->ht, data->ht, data->sp);
 	}
 	else
 	{
-		appendStringInfo(&colnames, "%s%s%s\"columnnames\":%s[", data->ht, data->ht, data->ht, data->sp);
-		appendStringInfo(&coltypes, "%s%s%s\"columntypes\":%s[", data->ht, data->ht, data->ht, data->sp);
+		appendStringInfo(&colnames, "%s\"columnnames\":%s[", data->ht, data->sp);
+		appendStringInfo(&coltypes, "%s\"columntypes\":%s[", data->ht, data->sp);
 		if (data->include_type_oids)
-			appendStringInfo(&coltypeoids, "%s%s%s\"columntypeoids\":%s[", data->ht, data->ht, data->ht, data->sp);
+			appendStringInfo(&coltypeoids, "%s\"columntypeoids\":%s[", data->ht, data->sp);
 		if (data->include_not_null)
-			appendStringInfo(&colnotnulls, "%s%s%s\"columnoptionals\":%s[", data->ht, data->ht, data->ht, data->sp);
-		appendStringInfo(&colvalues, "%s%s%s\"columnvalues\":%s[", data->ht, data->ht, data->ht, data->sp);
+			appendStringInfo(&colnotnulls, "%s\"columnoptionals\":%s[", data->ht, data->sp);
+		appendStringInfo(&colvalues, "%s\"columnvalues\":%s[", data->ht, data->sp);
 	}
 
 	/* Print column information (name, type, value) */
@@ -701,7 +662,7 @@ tuple_to_stringinfo(LogicalDecodingContext *ctx, TupleDesc tupdesc, HeapTuple tu
 		if (data->include_type_oids)
 			appendStringInfo(&coltypeoids, "],%s", data->nl);
 		appendStringInfo(&colvalues, "]%s", data->nl);
-		appendStringInfo(&colvalues, "%s%s%s}%s", data->ht, data->ht, data->ht, data->nl);
+		appendStringInfo(&colvalues, "%s}%s", data->ht, data->nl);
 	}
 	else
 	{
@@ -780,6 +741,8 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	/* schema and table names are used for select tables */
 	schemaname = get_namespace_name(class_form->relnamespace);
 	tablename = NameStr(class_form->relname);
+
+	OutputPluginPrepareWrite(ctx, true);	
 
 	/* Make sure rd_replidindex is set */
 	RelationGetIndexList(relation);
@@ -896,29 +859,22 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 			Assert(false);
 	}
 
-	/* Change counter */
-	data->nr_changes++;
-
-	appendStringInfo(ctx->out, "%s", data->nl);
-
-	appendStringInfo(ctx->out, "%s%s", data->ht, data->ht);
-
-	if (data->nr_changes > 1)
-		appendStringInfoChar(ctx->out, ',');
-
 	appendStringInfo(ctx->out, "{%s", data->nl);
+
+	if (data->include_xids)	
+		appendStringInfo(ctx->out, "%s\"xid\":%s%u,%s", data->ht, data->sp, txn->xid, data->nl);
 
 	/* Print change kind */
 	switch (change->action)
 	{
 		case REORDER_BUFFER_CHANGE_INSERT:
-			appendStringInfo(ctx->out, "%s%s%s\"kind\":%s\"insert\",%s", data->ht, data->ht, data->ht, data->sp, data->nl);
+			appendStringInfo(ctx->out, "%s\"kind\":%s\"insert\",%s", data->ht, data->sp, data->nl);
 			break;
 		case REORDER_BUFFER_CHANGE_UPDATE:
-			appendStringInfo(ctx->out, "%s%s%s\"kind\":%s\"update\",%s", data->ht, data->ht, data->ht, data->sp, data->nl);
+			appendStringInfo(ctx->out, "%s\"kind\":%s\"update\",%s", data->ht, data->sp, data->nl);
 			break;
 		case REORDER_BUFFER_CHANGE_DELETE:
-			appendStringInfo(ctx->out, "%s%s%s\"kind\":%s\"delete\",%s", data->ht, data->ht, data->ht, data->sp, data->nl);
+			appendStringInfo(ctx->out, "%s\"kind\":%s\"delete\",%s", data->ht, data->sp, data->nl);
 			break;
 		default:
 			Assert(false);
@@ -927,11 +883,11 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	/* Print table name (possibly) qualified */
 	if (data->include_schemas)
 	{
-		appendStringInfo(ctx->out, "%s%s%s\"schema\":%s", data->ht, data->ht, data->ht, data->sp);
+		appendStringInfo(ctx->out, "%s\"schema\":%s", data->ht, data->sp);
 		escape_json(ctx->out, get_namespace_name(class_form->relnamespace));
 		appendStringInfo(ctx->out, ",%s", data->nl);
 	}
-	appendStringInfo(ctx->out, "%s%s%s\"table\":%s", data->ht, data->ht, data->ht, data->sp);
+	appendStringInfo(ctx->out, "%s\"table\":%s", data->ht, data->sp);
 	escape_json(ctx->out, NameStr(class_form->relname));
 	appendStringInfo(ctx->out, ",%s", data->nl);
 
@@ -999,10 +955,11 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 			Assert(false);
 	}
 
-	appendStringInfo(ctx->out, "%s%s}", data->ht, data->ht);
+	appendStringInfo(ctx->out, "}");
 
 	MemoryContextSwitchTo(old);
 	MemoryContextReset(data->context);
+	OutputPluginWrite(ctx, true);
 }
 
 #if	PG_VERSION_NUM >= 90600
@@ -1021,59 +978,30 @@ pg_decode_message(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	/* Avoid leaking memory by using and resetting our own context */
 	old = MemoryContextSwitchTo(data->context);
 
-	/*
-	 * write immediately iif (i) write-in-chunks=1 or (ii) non-transactional
-	 * messages.
-	 */
-	if (!transactional)
-		OutputPluginPrepareWrite(ctx, true);
-
-	/*
-	 * increment counter only for transactional messages because
-	 * non-transactional message has only one object.
-	 */
-	if (transactional)
-		data->nr_changes++;
+	OutputPluginPrepareWrite(ctx, true);
+	
+	appendStringInfo(ctx->out, "{%s%s\"kind\":%s\"message\",%s", data->nl, data->ht, data->sp, data->nl);
 
 	if (transactional)
-		appendStringInfo(ctx->out, "%s", data->nl);
-
-	/* build a complete JSON object for non-transactional message */
-	if (!transactional)
-		appendStringInfo(ctx->out, "{%s%s\"change\":%s[%s", data->nl, data->ht, data->sp, data->nl);
-
-	appendStringInfo(ctx->out, "%s%s", data->ht, data->ht);
-
-	if (data->nr_changes > 1)
-		appendStringInfoChar(ctx->out, ',');
-
-	appendStringInfo(ctx->out, "{%s%s%s%s\"kind\":%s\"message\",%s", data->nl, data->ht, data->ht, data->ht, data->sp, data->nl);
-
-	if (transactional)
-		appendStringInfo(ctx->out, "%s%s%s\"transactional\":%strue,%s", data->ht, data->ht, data->ht, data->sp, data->nl);
+		appendStringInfo(ctx->out, "%s\"transactional\":%strue,%s", data->ht, data->sp, data->nl);
 	else
-		appendStringInfo(ctx->out, "%s%s%s\"transactional\":%sfalse,%s", data->ht, data->ht, data->ht, data->sp, data->nl);
+		appendStringInfo(ctx->out, "%s\"transactional\":%sfalse,%s", data->ht, data->sp, data->nl);
 
-	appendStringInfo(ctx->out, "%s%s%s\"prefix\":%s", data->ht, data->ht, data->ht, data->sp);
+	appendStringInfo(ctx->out, "%s\"prefix\":%s", data->ht, data->sp);
 	escape_json(ctx->out, prefix);
-	appendStringInfo(ctx->out, ",%s%s%s%s\"content\":%s", data->nl, data->ht, data->ht, data->ht, data->sp);
+	appendStringInfo(ctx->out, ",%s%s\"content\":%s", data->nl, data->ht, data->sp);
 
 	content_str = (char *) palloc0((content_size + 1) * sizeof(char));
 	strncpy(content_str, content, content_size);
 	escape_json(ctx->out, content_str);
 	pfree(content_str);
 
-	appendStringInfo(ctx->out, "%s%s%s}", data->nl, data->ht, data->ht);
-
-	/* build a complete JSON object for non-transactional message */
-	if (!transactional)
-		appendStringInfo(ctx->out, "%s%s]%s}", data->nl, data->ht, data->nl);
+	appendStringInfo(ctx->out, "%s}", data->nl);
 
 	MemoryContextSwitchTo(old);
 	MemoryContextReset(data->context);
 
-	if (!transactional)
-		OutputPluginWrite(ctx, true);
+	OutputPluginWrite(ctx, true);
 }
 #endif
 
