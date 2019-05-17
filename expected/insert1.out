@@ -81,6 +81,7 @@ COMMIT;
 SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pretty-print', '1', 'include-typmod', '0');
                                                                                                     data                                                                                                     
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"event":"begin"}
  {                                                                                                                                                                                                          +
          "kind": "insert",                                                                                                                                                                                  +
          "schema": "public",                                                                                                                                                                                +
@@ -113,7 +114,8 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columntypes": ["int4", "int4", "int4"],                                                                                                                                                           +
          "columnvalues": [1, 2, 3]                                                                                                                                                                          +
  }
-(4 rows)
+ {"event":"commit"}
+(6 rows)
 
 SELECT 'stop' FROM pg_drop_replication_slot('regression_slot');
  ?column? 

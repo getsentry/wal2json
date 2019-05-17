@@ -34,6 +34,7 @@ DELETE FROM table_with_pk WHERE b = 1;
 SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pretty-print', '1');
                                                                                                                              data                                                                                                                             
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"event":"begin"}
  {                                                                                                                                                                                                                                                           +
          "kind": "insert",                                                                                                                                                                                                                                   +
          "schema": "public",                                                                                                                                                                                                                                 +
@@ -42,6 +43,8 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
          "columntypes": ["smallint", "smallint", "integer", "bigint", "numeric(5,3)", "real", "double precision", "character(10)", "character varying(30)", "text", "bit varying(20)", "timestamp without time zone", "date", "boolean", "json", "tsvector"],+
          "columnvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]                                                 +
  }
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                                                                           +
          "kind": "update",                                                                                                                                                                                                                                   +
          "schema": "public",                                                                                                                                                                                                                                 +
@@ -55,6 +58,8 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
                  "keyvalues": [1, 2, 3]                                                                                                                                                                                                                      +
          }                                                                                                                                                                                                                                                   +
  }
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                                                                           +
          "kind": "delete",                                                                                                                                                                                                                                   +
          "schema": "public",                                                                                                                                                                                                                                 +
@@ -65,11 +70,13 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
                  "keyvalues": [1, 2, 3]                                                                                                                                                                                                                      +
          }                                                                                                                                                                                                                                                   +
  }
-(3 rows)
+ {"event":"commit"}
+(9 rows)
 
 SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pretty-print', '1', 'include-typmod', '0');
                                                                                                      data                                                                                                      
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"event":"begin"}
  {                                                                                                                                                                                                            +
          "kind": "insert",                                                                                                                                                                                    +
          "schema": "public",                                                                                                                                                                                  +
@@ -78,6 +85,8 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columntypes": ["int2", "int2", "int4", "int8", "numeric", "float4", "float8", "bpchar", "varchar", "text", "varbit", "timestamp", "date", "bool", "json", "tsvector"],                              +
          "columnvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]  +
  }
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                            +
          "kind": "update",                                                                                                                                                                                    +
          "schema": "public",                                                                                                                                                                                  +
@@ -91,6 +100,8 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
                  "keyvalues": [1, 2, 3]                                                                                                                                                                       +
          }                                                                                                                                                                                                    +
  }
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                            +
          "kind": "delete",                                                                                                                                                                                    +
          "schema": "public",                                                                                                                                                                                  +
@@ -101,7 +112,8 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
                  "keyvalues": [1, 2, 3]                                                                                                                                                                       +
          }                                                                                                                                                                                                    +
  }
-(3 rows)
+ {"event":"commit"}
+(9 rows)
 
 SELECT 'stop' FROM pg_drop_replication_slot('regression_slot');
  ?column? 
