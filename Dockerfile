@@ -1,14 +1,7 @@
-FROM postgres:9.6
+FROM postgres:9.6-alpine
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        git \
-        postgresql-server-dev-9.6 && \
-    rm -rf /var/lib/apt/lists/*
-
+RUN apk add --no-cache --virtual .build-deps gcc git make musl-dev pkgconf
 COPY . /wal2json
-
 RUN cd wal2json && make && make install && rm -rf wal2json
 
 COPY /docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
