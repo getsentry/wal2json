@@ -39,7 +39,11 @@ ALTER TABLE table_with_unique REPLICA IDENTITY DEFAULT;
 SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pretty-print', '1', 'include-typmod', '0');
                                                                                                       data                                                                                                      
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"event":"begin"}
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                             +
+         "event": "change",                                                                                                                                                                                    +
          "kind": "update",                                                                                                                                                                                     +
          "schema": "public",                                                                                                                                                                                   +
          "table": "table_with_unique",                                                                                                                                                                         +
@@ -52,7 +56,10 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
                  "keyvalues": [1.23, false]                                                                                                                                                                    +
          }                                                                                                                                                                                                     +
  }
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                             +
+         "event": "change",                                                                                                                                                                                    +
          "kind": "update",                                                                                                                                                                                     +
          "schema": "public",                                                                                                                                                                                   +
          "table": "table_with_unique",                                                                                                                                                                         +
@@ -65,7 +72,10 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
                  "keyvalues": [4.56, true]                                                                                                                                                                     +
          }                                                                                                                                                                                                     +
  }
-(2 rows)
+ {"event":"commit"}
+ {"event":"begin"}
+ {"event":"commit"}
+(10 rows)
 
 SELECT 'stop' FROM pg_drop_replication_slot('regression_slot');
  ?column? 

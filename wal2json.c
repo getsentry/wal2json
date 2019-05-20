@@ -406,6 +406,19 @@ pg_decode_shutdown(LogicalDecodingContext *ctx)
 static void
 pg_decode_begin_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn)
 {
+	JsonDecodingData *data = ctx->output_plugin_private;	
+
+	OutputPluginPrepareWrite(ctx, true);
+
+ 	appendStringInfo(ctx->out, "{\"event\":\"begin\"");
+	if (data->include_xids)	
+		appendStringInfo(ctx->out, ",%s\"xid\":%s%u%s", data->sp, data->sp, txn->xid, data->sp);
+
+ 	if (data->include_timestamp)	
+		appendStringInfo(ctx->out, ",%s\"timestamp\":%s\"%s\"%s", data->sp, data->sp, timestamptz_to_str(txn->commit_time), data->nl);	
+
+	appendStringInfo(ctx->out, "}");
+	OutputPluginWrite(ctx, true);
 }
 
 /* COMMIT callback */
@@ -413,6 +426,9 @@ static void
 pg_decode_commit_txn(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 					 XLogRecPtr commit_lsn)
 {
+	OutputPluginPrepareWrite(ctx, true);
+ 	appendStringInfo(ctx->out, "{\"event\":\"commit\"}");
+	OutputPluginWrite(ctx, true);
 }
 
 
@@ -860,6 +876,7 @@ pg_decode_change(LogicalDecodingContext *ctx, ReorderBufferTXN *txn,
 	}
 
 	appendStringInfo(ctx->out, "{%s", data->nl);
+	appendStringInfo(ctx->out, "%s\"event\":%s\"change\",%s", data->ht, data->sp, data->nl);
 
 	if (data->include_xids)	
 		appendStringInfo(ctx->out, "%s\"xid\":%s%u,%s", data->ht, data->sp, txn->xid, data->nl);

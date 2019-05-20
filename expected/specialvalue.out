@@ -20,7 +20,11 @@ COMMIT;
 SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pretty-print', '1', 'include-typmod', '0');
                                                   data                                                   
 ---------------------------------------------------------------------------------------------------------
+ {"event":"begin"}
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                      +
+         "event": "change",                                                                             +
          "kind": "insert",                                                                              +
          "schema": "public",                                                                            +
          "table": "xpto",                                                                               +
@@ -29,6 +33,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [1, true, "test1", null]                                                       +
  }
  {                                                                                                      +
+         "event": "change",                                                                             +
          "kind": "insert",                                                                              +
          "schema": "public",                                                                            +
          "table": "xpto",                                                                               +
@@ -37,6 +42,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [2, false, "test2", null]                                                      +
  }
  {                                                                                                      +
+         "event": "change",                                                                             +
          "kind": "insert",                                                                              +
          "schema": "public",                                                                            +
          "table": "xpto",                                                                               +
@@ -45,6 +51,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columnvalues": [3, null, "null", null]                                                        +
  }
  {                                                                                                      +
+         "event": "change",                                                                             +
          "kind": "insert",                                                                              +
          "schema": "public",                                                                            +
          "table": "xpto",                                                                               +
@@ -52,7 +59,8 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
          "columntypes": ["int4", "bool", "varchar", "float4"],                                          +
          "columnvalues": [4, true, "valid: ' \" \\ / \b \f \n \r \t ⁿ 陿 invalid: \\g \\k end", 123.456]+
  }
-(4 rows)
+ {"event":"commit"}
+(8 rows)
 
 SELECT 'stop' FROM pg_drop_replication_slot('regression_slot');
  ?column? 

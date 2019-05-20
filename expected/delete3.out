@@ -85,7 +85,11 @@ ALTER TABLE table_with_unique REPLICA IDENTITY DEFAULT;
 SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pretty-print', '1', 'include-typmod', '0');
                                                                                                        data                                                                                                       
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"event":"begin"}
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                               +
+         "event": "change",                                                                                                                                                                                      +
          "kind": "delete",                                                                                                                                                                                       +
          "schema": "public",                                                                                                                                                                                     +
          "table": "table_with_pk",                                                                                                                                                                               +
@@ -95,7 +99,10 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
                  "keyvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
          }                                                                                                                                                                                                       +
  }
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                               +
+         "event": "change",                                                                                                                                                                                      +
          "kind": "delete",                                                                                                                                                                                       +
          "schema": "public",                                                                                                                                                                                     +
          "table": "table_with_pk",                                                                                                                                                                               +
@@ -105,7 +112,14 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
                  "keyvalues": [2, 4, 5, 6, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
          }                                                                                                                                                                                                       +
  }
+ {"event":"commit"}
+ {"event":"begin"}
+ {"event":"commit"}
+ {"event":"begin"}
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                               +
+         "event": "change",                                                                                                                                                                                      +
          "kind": "delete",                                                                                                                                                                                       +
          "schema": "public",                                                                                                                                                                                     +
          "table": "table_without_pk",                                                                                                                                                                            +
@@ -115,7 +129,14 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
                  "keyvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
          }                                                                                                                                                                                                       +
  }
+ {"event":"commit"}
+ {"event":"begin"}
+ {"event":"commit"}
+ {"event":"begin"}
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                               +
+         "event": "change",                                                                                                                                                                                      +
          "kind": "delete",                                                                                                                                                                                       +
          "schema": "public",                                                                                                                                                                                     +
          "table": "table_with_unique",                                                                                                                                                                           +
@@ -125,7 +146,10 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
                  "keyvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
          }                                                                                                                                                                                                       +
  }
-(4 rows)
+ {"event":"commit"}
+ {"event":"begin"}
+ {"event":"commit"}
+(24 rows)
 
 SELECT 'stop' FROM pg_drop_replication_slot('regression_slot');
  ?column? 

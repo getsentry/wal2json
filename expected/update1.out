@@ -83,7 +83,11 @@ WARNING:  table "table_without_pk" without primary key or replica identity is no
 WARNING:  table "table_with_unique" without primary key or replica identity is nothing
                                                                                                       data                                                                                                      
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"event":"begin"}
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                             +
+         "event": "change",                                                                                                                                                                                    +
          "kind": "update",                                                                                                                                                                                     +
          "schema": "public",                                                                                                                                                                                   +
          "table": "table_with_pk",                                                                                                                                                                             +
@@ -96,7 +100,10 @@ WARNING:  table "table_with_unique" without primary key or replica identity is n
                  "keyvalues": [1, 2, 3]                                                                                                                                                                        +
          }                                                                                                                                                                                                     +
  }
+ {"event":"commit"}
+ {"event":"begin"}
  {                                                                                                                                                                                                             +
+         "event": "change",                                                                                                                                                                                    +
          "kind": "update",                                                                                                                                                                                     +
          "schema": "public",                                                                                                                                                                                   +
          "table": "table_with_pk",                                                                                                                                                                             +
@@ -109,7 +116,10 @@ WARNING:  table "table_with_unique" without primary key or replica identity is n
                  "keyvalues": [1, 2, 3]                                                                                                                                                                        +
          }                                                                                                                                                                                                     +
  }
-(2 rows)
+ {"event":"commit"}
+ {"event":"begin"}
+ {"event":"commit"}
+(10 rows)
 
 SELECT 'stop' FROM pg_drop_replication_slot('regression_slot');
  ?column? 
