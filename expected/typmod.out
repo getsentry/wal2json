@@ -36,6 +36,7 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  {"event":"begin"}
  {                                                                                                                                                                                                                                                           +
+         "event": "change",                                                                                                                                                                                                                                  +
          "kind": "insert",                                                                                                                                                                                                                                   +
          "schema": "public",                                                                                                                                                                                                                                 +
          "table": "table_with_pk",                                                                                                                                                                                                                           +
@@ -46,6 +47,7 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
  {"event":"commit"}
  {"event":"begin"}
  {                                                                                                                                                                                                                                                           +
+         "event": "change",                                                                                                                                                                                                                                  +
          "kind": "update",                                                                                                                                                                                                                                   +
          "schema": "public",                                                                                                                                                                                                                                 +
          "table": "table_with_pk",                                                                                                                                                                                                                           +
@@ -61,6 +63,7 @@ SELECT data FROM pg_logical_slot_peek_changes('regression_slot', NULL, NULL, 'pr
  {"event":"commit"}
  {"event":"begin"}
  {                                                                                                                                                                                                                                                           +
+         "event": "change",                                                                                                                                                                                                                                  +
          "kind": "delete",                                                                                                                                                                                                                                   +
          "schema": "public",                                                                                                                                                                                                                                 +
          "table": "table_with_pk",                                                                                                                                                                                                                           +
@@ -78,6 +81,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  {"event":"begin"}
  {                                                                                                                                                                                                            +
+         "event": "change",                                                                                                                                                                                   +
          "kind": "insert",                                                                                                                                                                                    +
          "schema": "public",                                                                                                                                                                                  +
          "table": "table_with_pk",                                                                                                                                                                            +
@@ -88,6 +92,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
  {"event":"commit"}
  {"event":"begin"}
  {                                                                                                                                                                                                            +
+         "event": "change",                                                                                                                                                                                   +
          "kind": "update",                                                                                                                                                                                    +
          "schema": "public",                                                                                                                                                                                  +
          "table": "table_with_pk",                                                                                                                                                                            +
@@ -103,6 +108,7 @@ SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pre
  {"event":"commit"}
  {"event":"begin"}
  {                                                                                                                                                                                                            +
+         "event": "change",                                                                                                                                                                                   +
          "kind": "delete",                                                                                                                                                                                    +
          "schema": "public",                                                                                                                                                                                  +
          "table": "table_with_pk",                                                                                                                                                                            +
