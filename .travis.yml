@@ -1,0 +1,5 @@
+language: c
+services:
+  - postgresql
+script: make && make install && PGUSER=postgres make installcheck
+after_failure: cat /wal2json/regression.diffs
