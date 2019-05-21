@@ -8,6 +8,6 @@ addons:
       - postgresql-server-dev-9.6
 before_script:
   - psql -f .travis/alter_system.sql
-  - sudo service postgresql reload 9.6
+  - sudo service postgresql restart 9.6
 script: make && sudo make install && make installcheck
 after_failure: cat regression.diffs
