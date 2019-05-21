@@ -7,7 +7,7 @@ addons:
       - postgresql-contrib-9.6
       - postgresql-server-dev-9.6
 before_script:
-  - sudo tee -a /var/lib/postgresql/data/postgresql.conf < .travis/postgresql.conf
+  - psql -f .travis/alter_system.sql
   - sudo service postgresql reload 9.6
-script: make && sudo make install && PGUSER=postgres make installcheck
+script: make && sudo make install && make installcheck
 after_failure: cat regression.diffs
