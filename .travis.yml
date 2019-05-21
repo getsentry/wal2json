@@ -6,5 +6,5 @@ addons:
       - postgresql-9.6
       - postgresql-contrib-9.6
       - postgresql-server-dev-9.6
-script: make && make install && PGUSER=postgres make installcheck
+script: make && sudo make install && PGUSER=postgres make installcheck
 after_failure: cat /wal2json/regression.diffs
