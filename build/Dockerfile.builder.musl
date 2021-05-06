@@ -5,10 +5,12 @@ ARG DOCKER_ARCH=amd64
 # We would mount the working directory with the source (that's the
 # part that changes) and run the build process on a running container
 
+# This builds a library that depends on musl
 FROM $DOCKER_ARCH/postgres:9.6-alpine
 RUN apk add --no-cache --virtual .build-deps gcc make musl-dev pkgconf diffutils
 
 ENV DOCKER_ARCH=$DOCKER_ARCH
+ENV LIBC_VERSION="musl"
 
 WORKDIR /workspace
-ENTRYPOINT [ "./docker-entrypoint.sh" ]
+ENTRYPOINT [ "./build/docker-entrypoint.sh" ]

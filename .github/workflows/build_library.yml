@@ -11,6 +11,9 @@ jobs:
   linux:
     name: Linux
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        libc: [musl, glibc]
   
     steps:
       - uses: actions/checkout@v2
@@ -20,15 +23,15 @@ jobs:
         run: >
           docker build
           --build-arg DOCKER_ARCH=amd64
-          -t getsentry/postgres_wal2json:build
-          -f Dockerfile.builder .
+          -t getsentry/postgres_wal2json_${{ matrix.libc }}:build
+          -f build/Dockerfile.builder.${{ matrix.libc }} .
       - name: Build in Docker (x86-64)
         run: >
           docker run
           -e DOCKER_ARCH=amd64
           -v `pwd`:/workspace
-          getsentry/postgres_wal2json:build
+          getsentry/postgres_wal2json_${{ matrix.libc }}:build
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ github.sha }}
-          path: wal2json-Linux-x86_64.so
+          path: wal2json-Linux-x86_64-${{ matrix.libc }}.so

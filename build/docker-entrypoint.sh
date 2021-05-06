@@ -8,4 +8,4 @@ else
 fi
 
 make
-mv wal2json.so /workspace/wal2json-Linux-$BUILD_ARCH.so
+mv wal2json.so /workspace/wal2json-Linux-$BUILD_ARCH-$LIBC_VERSION.so

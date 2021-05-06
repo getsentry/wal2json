@@ -17,4 +17,5 @@ targets:
   - name: github
 
 requireNames:
-  - /^wal2json-Linux-x86_64.so$/
+  - /^wal2json-Linux-x86_64-musl.so$/
+  - /^wal2json-Linux-x86_64-glibc.so$/
