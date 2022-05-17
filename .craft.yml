@@ -1,9 +1,0 @@
-minVersion: "0.23.1"
-# TODO: Add a changelog
-changelogPolicy: none
-preReleaseCommand: ''
-requireNames:
-  - /^wal2json-Linux-x86_64-musl.so$/
-  - /^wal2json-Linux-x86_64-glibc.so$/
-targets:
-  - name: github
