@@ -79,44 +79,44 @@ INSERT INTO table_with_unique (b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) VALU
 INSERT INTO "test ""schema"."test "" with 'quotes'" VALUES (1, 2, 3);
 COMMIT;
 SELECT data FROM pg_logical_slot_get_changes('regression_slot', NULL, NULL, 'pretty-print', '1', 'include-typmod', '0');
-                                                                                                    data                                                                                                     
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                     data                                                                                                     
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  {"event":"begin"}
- {                                                                                                                                                                                                          +
-         "event": "change",                                                                                                                                                                                 +
-         "kind": "insert",                                                                                                                                                                                  +
-         "schema": "public",                                                                                                                                                                                +
-         "table": "table_with_pk",                                                                                                                                                                          +
-         "columnnames": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],                                                                                                   +
-         "columntypes": ["int2", "int2", "int4", "int8", "numeric", "float4", "float8", "bpchar", "varchar", "text", "varbit", "timestamp", "date", "bool", "json", "tsvector"],                            +
-         "columnvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
+ {                                                                                                                                                                                                           +
+         "event": "change",                                                                                                                                                                                  +
+         "kind": "insert",                                                                                                                                                                                   +
+         "schema": "public",                                                                                                                                                                                 +
+         "table": "table_with_pk",                                                                                                                                                                           +
+         "columnnames": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],                                                                                                    +
+         "columntypes": ["int2", "int2", "int4", "int8", "numeric", "float4", "float8", "bpchar", "varchar", "text", "varbit", "timestamp", "date", "bool", "json", "tsvector"],                             +
+         "columnvalues": [1, 1, 2, 3, 3.540, 876.5635, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
  }
- {                                                                                                                                                                                                          +
-         "event": "change",                                                                                                                                                                                 +
-         "kind": "insert",                                                                                                                                                                                  +
-         "schema": "public",                                                                                                                                                                                +
-         "table": "table_without_pk",                                                                                                                                                                       +
-         "columnnames": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],                                                                                                   +
-         "columntypes": ["int2", "int2", "int4", "int8", "numeric", "float4", "float8", "bpchar", "varchar", "text", "varbit", "timestamp", "date", "bool", "json", "tsvector"],                            +
-         "columnvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
+ {                                                                                                                                                                                                           +
+         "event": "change",                                                                                                                                                                                  +
+         "kind": "insert",                                                                                                                                                                                   +
+         "schema": "public",                                                                                                                                                                                 +
+         "table": "table_without_pk",                                                                                                                                                                        +
+         "columnnames": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],                                                                                                    +
+         "columntypes": ["int2", "int2", "int4", "int8", "numeric", "float4", "float8", "bpchar", "varchar", "text", "varbit", "timestamp", "date", "bool", "json", "tsvector"],                             +
+         "columnvalues": [1, 1, 2, 3, 3.540, 876.5635, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
  }
- {                                                                                                                                                                                                          +
-         "event": "change",                                                                                                                                                                                 +
-         "kind": "insert",                                                                                                                                                                                  +
-         "schema": "public",                                                                                                                                                                                +
-         "table": "table_with_unique",                                                                                                                                                                      +
-         "columnnames": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],                                                                                                   +
-         "columntypes": ["int2", "int2", "int4", "int8", "numeric", "float4", "float8", "bpchar", "varchar", "text", "varbit", "timestamp", "date", "bool", "json", "tsvector"],                            +
-         "columnvalues": [1, 1, 2, 3, 3.540, 876.563, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
+ {                                                                                                                                                                                                           +
+         "event": "change",                                                                                                                                                                                  +
+         "kind": "insert",                                                                                                                                                                                   +
+         "schema": "public",                                                                                                                                                                                 +
+         "table": "table_with_unique",                                                                                                                                                                       +
+         "columnnames": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p"],                                                                                                    +
+         "columntypes": ["int2", "int2", "int4", "int8", "numeric", "float4", "float8", "bpchar", "varchar", "text", "varbit", "timestamp", "date", "bool", "json", "tsvector"],                             +
+         "columnvalues": [1, 1, 2, 3, 3.540, 876.5635, 1.23, "teste     ", "testando", "um texto longo", "001110010101010", "Sat Nov 02 17:30:52 2013", "02-04-2013", true, "{ \"a\": 123 }", "'Old' 'Parr'"]+
  }
- {                                                                                                                                                                                                          +
-         "event": "change",                                                                                                                                                                                 +
-         "kind": "insert",                                                                                                                                                                                  +
-         "schema": "test \"schema",                                                                                                                                                                         +
-         "table": "test \" with 'quotes'",                                                                                                                                                                  +
-         "columnnames": ["id", "col spaces", "col\"quotes"],                                                                                                                                                +
-         "columntypes": ["int4", "int4", "int4"],                                                                                                                                                           +
-         "columnvalues": [1, 2, 3]                                                                                                                                                                          +
+ {                                                                                                                                                                                                           +
+         "event": "change",                                                                                                                                                                                  +
+         "kind": "insert",                                                                                                                                                                                   +
+         "schema": "test \"schema",                                                                                                                                                                          +
+         "table": "test \" with 'quotes'",                                                                                                                                                                   +
+         "columnnames": ["id", "col spaces", "col\"quotes"],                                                                                                                                                 +
+         "columntypes": ["int4", "int4", "int4"],                                                                                                                                                            +
+         "columnvalues": [1, 2, 3]                                                                                                                                                                           +
  }
  {"event":"commit"}
 (6 rows)
